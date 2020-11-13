@@ -8,21 +8,25 @@ from typing import Optional
 
 from telegram import Message, Chat, User
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
-from telegram.ext import CommandHandler, Filters, MessageHandler, CallbackQueryHandler, CallbackContext
+from telegram.ext import (
+    CommandHandler,
+    Filters,
+    MessageHandler,
+    CallbackQueryHandler,
+    CallbackContext,
+)
 from telegram.ext.dispatcher import run_async, DispatcherHandlerStop
 from telegram.utils.helpers import escape_markdown
 
 from Bot import (
     dispatcher,
-    updater,)
+    updater,
+)
 
 StartTime = time.time()
 
 
-PM_START_TEXT = f"""
-Hewwo, uwu >////<. 
-Tap on /help to know all my commands!
-"""
+
 
 help_text = """
 *NEKOS API* [.](https://telegra.ph/file/d59eaf89cf934fb2feeec.jpg)
@@ -77,58 +81,35 @@ help_text = """
  - /smug: Sends Random Smug GIFs.
  - /baka: Sends Random Baka Shout GIFs.
  - /dva: Sends Random D.VA source Images.
- 
+
  *AniList*
  - /anime: search anime
  - /character: search character
  - /manga: search manga
  - /airing: get anime airing status
  """
- 
-@run_async
-def start(update, context):
-    
-    
-    keyboard = [[InlineKeyboardButton("Maintained by", url="t.me/dank_as_fuck"), InlineKeyboardButton("Help", callback_data="help")]]
 
-    if update.effective_chat.type == "private":
-        args = context.args
-        update.effective_message.reply_photo(
-                "https://telegra.ph/file/d59eaf89cf934fb2feeec.jpg",
-                PM_START_TEXT,
-                timeout=60,
-                parse_mode=ParseMode.MARKDOWN,
-                disable_web_page_preview=True,
-                reply_markup=InlineKeyboardMarkup(keyboard)
-            )
-    else:
-        update.effective_message.reply_text(
-            "Hi!"
-        )
-        
-        
+
 @run_async
 def edit_msg(update, context):
     update.effective_message.delete()
     update.effective_message.reply_text(help_text, parse_mode=ParseMode.MARKDOWN)
-    
-    
+
+
 @run_async
 def help(update, context):
     if update.effective_chat.type == "private":
         args = context.args
         update.effective_message.reply_text(
-                help_text,
-                parse_mode=ParseMode.MARKDOWN,
-                timeout=60,
-                disable_web_page_preview=False,
-            )
-    else:
-        update.effective_message.reply_text(
-            "do that in pm"
+            help_text,
+            parse_mode=ParseMode.MARKDOWN,
+            timeout=60,
+            disable_web_page_preview=False,
         )
-        
-        
+    else:
+        update.effective_message.reply_text("do that in pm")
+
+
 # Kanged from PaperPlane Extended userbot
 def speed_convert(size):
     """
@@ -141,6 +122,7 @@ def speed_convert(size):
         size /= power
         zero += 1
     return f"{round(size, 2)} {units[zero]}"
+
 
 def get_readable_time(seconds: int) -> str:
     count = 0
@@ -183,13 +165,12 @@ def ping(update: Update, context: CallbackContext):
         "PONG!!\n"
         "<b>Time Taken:</b> <code>{}</code>\n"
         "<b>Service uptime:</b> <code>{}</code>".format(telegram_ping, uptime),
-        parse_mode=ParseMode.HTML)
+        parse_mode=ParseMode.HTML,
+    )
 
-start_handler = CommandHandler("start", start, pass_args=True)
 help_handler = CommandHandler("help", help, pass_args=True)
-CALLBACK_QUERY_HANDLER = CallbackQueryHandler(edit_msg, pattern='help')
+CALLBACK_QUERY_HANDLER = CallbackQueryHandler(edit_msg, pattern="help")
 PING_HANDLER = CommandHandler("ping", ping)
-dispatcher.add_handler(start_handler)
 dispatcher.add_handler(help_handler)
 dispatcher.add_handler(CALLBACK_QUERY_HANDLER)
 dispatcher.add_handler(PING_HANDLER)
